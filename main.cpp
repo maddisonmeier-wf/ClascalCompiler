@@ -17,7 +17,6 @@ extern "C"
 {
     
   #include "shared.h"
-  #include "symtab.h"
   #include "rulefuncs.h"
    extern struct program_t *program;
 
@@ -108,9 +107,6 @@ void parse_command_line_arguments(int argc, char **argv, struct args_t *args)
 int main(int argc, char **argv)
 {
   parse_command_line_arguments(argc, argv, &cmdArgs);
-
-  usrdef_init();
-  symtab_init();
   /* begin parsing */
   yyparse();
   
@@ -121,24 +117,6 @@ int main(int argc, char **argv)
   code_generation(program);
   /* If there were errors during semantic analysis, exit. */
   exit_on_errors();
-
-  /* If we should only perform semantic analysis, exit */
-  if (cmdArgs.exit_after_sem == 1) {
-    exit(0);
-  }
-
-  if (cmdArgs.verbose == 1) {
-    /* print the user defined data types */
-    printf("USER DEFINED DATA TYPES:\n");
-    printf("------------------------\n");
-    usrdef_print();
-    
-    /* print the symbol table*/
-    printf("\n\n");
-    printf("SYMBOL TABLE:\n");
-    printf("-------------\n");
-    symtab_print(0);
-  }
 
   /* Simple, wasn't it ?!! */
 

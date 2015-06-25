@@ -15,7 +15,6 @@
 #include "shared.h"
 #include "semantic.h"
 #include "rulefuncs.h"
-#include "usrdef.h"
 #include "symtab.h"
 
 struct class_table_t *g_class_table_head = NULL;

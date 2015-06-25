@@ -1,7 +1,6 @@
 extern "C"
 {
 	#include "shared.h"
-	#include "symtab.h"
 	#include "rulefuncs.h"
 	#include "semantic.h"
 	#include "error.h"

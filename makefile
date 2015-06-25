@@ -13,8 +13,6 @@ CXXFLAGS = -g -Wall -D__STDC_LIMIT_MACROS
 YACCFLAGS = -d -y -v 
 
 CSOURCES = \
-	symtab.c\
-	usrdef.c \
 	rulefuncs.c \
 	error.c \
 	shared.c \
@@ -30,9 +28,7 @@ CXXSOURCES = \
 
 
 
-OBJECTS =   \
-	symtab.o\
-	usrdef.o \
+OBJECTS =  \
 	rulefuncs.o \
 	error.o \
 	shared.o \

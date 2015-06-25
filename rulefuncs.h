@@ -7,8 +7,6 @@
 #define RULEFUNCS_H
 
 #include "shared.h"
-#include "usrdef.h"
-#include "symtab.h"
 #include "error.h"
 
 
