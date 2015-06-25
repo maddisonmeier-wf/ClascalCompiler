@@ -1,0 +1,85 @@
+(* creates and reverses a linked-list *)
+program test;
+
+class ListNode
+BEGIN
+VAR 
+    val : integer;
+    next : ListNode;
+END
+
+class test
+BEGIN   
+VAR
+    ListHead, ListCurrent, pointer, newHead, innerPointer, next, previous, current : ListNode;
+    counter : integer;
+    bool : boolean;
+FUNCTION test;
+BEGIN
+    counter := 0;
+    ListHead := new ListNode;
+    ListHead.val := 3;
+    ListCurrent := ListHead;
+
+    while counter < 7 DO
+    BEGIN
+        ListCurrent.next := new ListNode;
+
+        if ListCurrent.val = 3 THEN
+                ListCurrent.next.val := 7
+            ELSE if ListCurrent.val = 7 THEN
+                    ListCurrent.next.val := 4
+                ELSE if ListCurrent.val = 4 THEN
+                        ListCurrent.next.val := 9 
+                    ELSE if ListCurrent.val = 9 THEN
+                            ListCurrent.next.val := 5
+                        ELSE if ListCurrent.val = 5 THEN
+                                ListCurrent.next.val := 2
+                            ELSE if ListCurrent.val = 2 THEN
+                                    ListCurrent.next.val := 6
+                                ELSE if ListCurrent.val = 6 THEN
+                                        ListCurrent.next.val := 1
+                                    ELSE 
+                                        ListCurrent.next.val := 200;
+
+
+        ListCurrent := ListCurrent.next;
+        counter := counter + 1
+    END;
+
+    pointer := ListHead;
+    counter := 200;
+
+    while pointer <> 0 DO
+    BEGIN
+        print pointer.val;
+        pointer := pointer.next
+    END;
+
+    current := ListHead;
+    print True; (*put here to make an obvious split between orig and reversed lists*)
+    while current <> 0 DO
+    BEGIN
+        next := current.next;
+        current.next := previous;
+        previous := current;
+        current := next
+    END;
+
+    newHead := previous;
+
+    pointer := newHead;
+
+    while pointer <> 0 DO
+    BEGIN
+        print pointer.val;
+        pointer := pointer.next
+    END
+
+    
+
+    
+    END
+
+END
+.

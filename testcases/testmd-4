@@ -1,0 +1,86 @@
+(* creates a doublely linked-list*)
+
+program test;
+
+class EE
+BEGIN
+VAR
+    id : integer;
+    next : EE;
+END
+
+
+class Outer
+BEGIN
+VAR
+    innerList : EE;
+    next : Outer;
+END
+
+class test
+BEGIN   
+VAR
+    Ocount, Ecount : integer;
+    OuterHead, OuterCurrent : Outer;
+    EEHead, EECurrent : EE;
+FUNCTION test;
+BEGIN
+    OuterHead := new Outer;
+
+    EEHead := new EE;
+    EEHead.id := 1;
+    EECurrent := EEHead;
+
+    Ecount := 2;
+
+    while Ecount < 10 DO
+    BEGIN
+        Ecount := Ecount + 1;
+        EECurrent.next := new EE;
+        EECurrent.next.id := Ecount;
+        EECurrent := EECurrent.next
+    END;
+
+    OuterHead.innerList := EEHead;
+    OuterCurrent := OuterHead;
+
+    while Ocount < 3 DO
+    BEGIN
+        Ecount := 1;
+        EEHead := new EE;
+        EEHead.id := Ecount;
+        EECurrent := EEHead;
+
+        while Ecount < 10 DO
+        BEGIN
+            Ecount := Ecount + 1;
+            EECurrent.next := new EE;
+            EECurrent.next.id := Ecount;
+            EECurrent := EECurrent.next
+            
+        END;
+
+        OuterCurrent.next := new Outer;
+        OuterCurrent.innerList := EEHead;
+        OuterCurrent := OuterCurrent.next;
+        Ocount := Ocount + 1
+
+    END;
+
+    while OuterHead <> 0 DO
+    BEGIN
+        EECurrent := EEHead;
+        while EECurrent <> 0 DO
+        BEGIN
+            print EECurrent.id;
+            EECurrent := EECurrent.next
+        END;
+        OuterHead := OuterHead.next
+
+    END
+  
+
+END
+
+END
+.

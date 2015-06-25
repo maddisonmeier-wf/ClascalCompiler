@@ -1,0 +1,25 @@
+1) all variables must have unique id's
+2) Parents must be defined before their children (no circular definitions)
+3) If a class has a user-defined type as an attribute, that user-defined 
+   type must be defined first (except in the case of attributes of themselve for linked-lists)
+4) Any attribute of a class that is also a class is a pointer and thus must be allocated
+   memory before use (ex a.b = new BB before use of a.b)
+5) setting one class equal to another will create aliases (the pointer value is copied)
+6) relational operators on classes will perform these on the value of the pointer
+7) printing a variable of a class will print the pointer of that class
+8) declaring an array of classes will actually be an array of pointers, you have to 
+   instantiate each one if you want to use them (see testmd-10 for example)
+9) We do not support negative indexed arrays (can't declare ARRAY[-1..5])
+10) if a parameter is a class, you are passing the pointer so it is always pass 
+    by reference
+11) The main method is static (cannot declare a var that is a class of it) can call
+    other methods from it just by name --> x := staticmethod(7); )
+12) Pass by var with a class will give you location of the pointer, compared to pass by val 
+    will give you the val of the pointer (ie passing class var aa, if you change was aa is 
+    set to in the function, that will actually change aa's pointer)
+13) return values of functions are stored in a var with same name as function
+14) calling "this.test()" if test is a method in the main class WILL NOT WORK
+    the main class (same name as program) is assumed to be a static class with 
+    static attr's and methods so just call test().
+15) "this" is reserved word for accessing the current object class you are within 
+16) MUST set return value at the end of the funciton

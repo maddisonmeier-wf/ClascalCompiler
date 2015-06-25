@@ -1,0 +1,135 @@
+(*performs some nested function calls as well as an insertion sort*)
+
+program test;
+
+class AttrArray 
+BEGIN
+    VAR
+    aa : ARRAY [0..19] of ArrayClass;
+END
+
+class ArrayClass
+BEGIN
+    VAR
+        val : integer;
+
+FUNCTION happy(aap, iip, cc : integer ; bb : boolean) : integer;
+VAR
+    aa : ARRAY [0..19] of ArrayClass;
+    ii, jj, tmp : integer;
+    tmpC : ArrayClass;
+BEGIN
+    ii := iip;
+    print aap;
+    print iip;
+    print cc;
+    print bb;
+
+    (*if cc >= 0 THEN
+        cc := happy(aap, iip, cc-1, bb)
+    ELSE
+        print False;*)
+
+    happy := cc
+
+END;
+
+FUNCTION arraysort(uns : AttrArray ; size : integer) : AttrArray;
+VAR 
+        ii, tmp, jj : integer;
+        tmpC : ArrayClass;
+
+BEGIN
+        ii := 1;
+
+        while ii < size DO
+        BEGIN
+            tmpC := uns.aa[ii];
+            tmp := uns.aa[ii].val;
+            jj := ii - 1;
+            while ((jj >= 0) AND (uns.aa[jj].val > tmp)) DO
+            BEGIN
+                uns.aa[jj + 1] := uns.aa[jj];
+                jj := jj - 1
+            END;
+            uns.aa[jj + 1] := tmpC;
+            ii := ii +1
+        END;
+
+        arraysort := uns
+
+END
+
+END
+
+
+class test
+BEGIN   
+VAR
+    aa : ARRAY [0..19] of ArrayClass;
+    ii, jj, tmp : integer;
+    bool : boolean;
+    tmpC : ArrayClass;
+    attr, uns : AttrArray;
+FUNCTION test;
+BEGIN
+    attr := new AttrArray;
+    ii := 0;
+    while ii < 20 DO
+    BEGIN
+        attr.aa[ii]:= new ArrayClass;
+        ii := ii + 1
+    END;
+
+    attr.aa[0].val := 34;
+    attr.aa[1].val := 7;
+    attr.aa[2].val := 4;
+    attr.aa[3].val := 312;
+    attr.aa[4].val := 12;
+    attr.aa[5].val := 2;
+    attr.aa[6].val := 33;
+    attr.aa[7].val := 98;
+    attr.aa[8].val := 16;
+    attr.aa[9].val := 14;
+    attr.aa[10].val := 89;
+    attr.aa[11].val := 10;
+    attr.aa[12].val := 44;
+    attr.aa[13].val := 76;
+    attr.aa[14].val := 11;
+    attr.aa[15].val := 15;
+    attr.aa[16].val := 17;
+    attr.aa[17].val := 9;
+    attr.aa[18].val := 2;
+    attr.aa[19].val := 1;
+
+
+    tmpC := new ArrayClass;
+    aa[1] := new ArrayClass;
+    ii:= 17;
+
+    
+    bool := True;
+    ii := tmpC.happy(5, attr.aa[6].val, tmpC.happy(6, 5, 17, bool), bool);
+    print ii;
+    ii:=0;
+
+    print False;
+    print False;
+
+
+    print False;
+    
+    attr := tmpC.arraysort(attr, 20);
+
+    ii := 0;
+     while ii < 20 DO
+    BEGIN
+        print attr.aa[ii].val;
+        ii := ii + 1
+    END
+
+END
+
+
+END
+.

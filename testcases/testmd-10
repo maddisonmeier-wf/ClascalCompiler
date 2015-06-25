@@ -1,0 +1,86 @@
+(*testmd-10 insertion sort on array*)
+(* The following sorts a list of ArrayClasses based on their val *)
+
+program test;
+
+class ArrayClass
+BEGIN
+    VAR
+        val : integer;
+END
+
+class test
+BEGIN   
+VAR
+    aa : ARRAY [0..19] of ArrayClass;
+    ii, jj, tmp : integer;
+    tmpC : ArrayClass;
+FUNCTION test;
+BEGIN
+    (* allocate memory for ArrayClass *)
+    while tmp < 20 DO
+    BEGIN
+        aa[tmp] := new ArrayClass;
+        tmp := tmp + 1
+    END;
+
+    aa[0].val := 8;
+    aa[1].val := 3;
+    aa[2].val := 5;
+    aa[3].val := 10;
+    aa[4].val := 80;
+    aa[5].val := 34;
+    aa[6].val := 3;
+    aa[7].val := 37;
+    aa[8].val := 90;
+    aa[9].val := 15;
+    aa[10].val := 25;
+    aa[11].val := 57;
+    aa[12].val := 7;
+    aa[13].val := 10;
+    aa[14].val := 33;
+    aa[15].val := 6;
+    aa[16].val := 9;
+    aa[17].val := 5;
+    aa[18].val := 45;
+    aa[19].val := 17;
+
+    ii := 0;
+
+    while ii < 20 DO
+    BEGIN
+        print aa[ii].val;
+        ii := ii +1
+    END;
+    
+    print True; (*used to easily separated the sorted and unsorted list*)
+
+    ii := 1;
+
+    while ii < 20 DO
+    BEGIN
+        tmpC := aa[ii];
+        tmp := aa[ii].val;
+        jj := ii - 1;
+        while ((jj >= 0) AND (aa[jj].val > tmp)) DO
+        BEGIN
+            aa[jj + 1] := aa[jj];
+            jj := jj - 1
+        END;
+        aa[jj + 1] := tmpC;
+        ii := ii +1
+    END;
+
+    ii := 0;
+
+    while ii < 20 DO
+    BEGIN
+        print aa[ii].val;
+        ii := ii +1
+    END
+
+    
+END
+
+END
+.

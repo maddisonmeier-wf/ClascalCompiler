@@ -1,0 +1,226 @@
+diff --git a/code_gen.cpp b/code_gen.cpp
+index 6e34e11..70f7053 100644
+--- a/code_gen.cpp
++++ b/code_gen.cpp
+@@ -39,6 +39,7 @@ bool proccessing_function = false; /*used in lookup_global var
+ 
+ void code_generation(struct program_t *program)
+ {
++	
+ 	int offset = 12; /*if add more #defines uupdate*/
+ 	
+ 	class_list_t *classes = program->cl;
+@@ -59,7 +60,6 @@ void code_generation(struct program_t *program)
+ 	
+ 	function_labels = cfg.size(); /*set the next label we can use for function bb's*/
+ 	
+-
+ 	class_list_t *in_order_class_list = reverse_class_list(program->cl);
+ 	std::vector<VarNode*> v = convert_c_structs_to_classes(program->ph->id, program->cl->class_node_list, offset, in_order_class_list);
+ 	add_primitives_to_class_table();
+@@ -650,6 +650,19 @@ string get_type_from_rhs(RHS *rhs)
+ 	return get_type_from_va(rhs->t1->data.var);
+ }
+ 
++/*checks to see if this va is the id "this" referring to the keyword */
++bool va_is_this(variable_access_t* va)
++{
++	if(va->type == VARIABLE_ACCESS_T_IDENTIFIER)
++	{
++		string var_name = char_to_str(va->data.id);
++		if(var_name.compare("this") == 0)
++			return true;
++	}
++
++	return false;
++}
++
+ string get_type_from_va(variable_access_t *va)
+ {
+ 	VarNode *va_node;
+@@ -660,24 +673,46 @@ string get_type_from_va(variable_access_t *va)
+ 	switch(va->type)
+ 	{
+ 		case VARIABLE_ACCESS_T_IDENTIFIER:
+-			va_node = look_up_global_var(va->data.id); //processed
+-			if (va_node != NULL)
+-				type = va_node->type;
++			if(va_is_this(va))
++			{
++				if(current_class_of_func == NULL)
++					cout << "used this is static function\n";
++				else
++					type = current_class_of_func->name;
++			}
+ 			else
+ 			{
+-				va_node = look_up_temp_var(va->data.id); //processed
++				va_node = look_up_global_var(va->data.id); //processed
+ 				if (va_node != NULL)
+-				{
+ 					type = va_node->type;
+-				}	
++				else
++				{
++					va_node = look_up_temp_var(va->data.id); //processed
++					if (va_node != NULL)
++					{
++						type = va_node->type;
++					}	
++				}
+ 			}
+ 			break;
+ 		case VARIABLE_ACCESS_T_INDEXED_VARIABLE:
+ 			type = get_type_from_va(va->data.iv->va);
+ 			break;
+ 		case VARIABLE_ACCESS_T_ATTRIBUTE_DESIGNATOR:
+-			parent_type = get_type_from_va(va->data.ad->va);
+-			parent_cl = look_up_class(parent_type);
++			if(va_is_this(va->data.ad->va)) 
++			{
++				if(current_class_of_func == NULL)
++					cout << "get_type_from_va error call within static main class\n";
++
++				/* we want the class that we are currently in */
++				parent_type = current_class_of_func->name;
++				parent_cl = current_class_of_func;
++			}
++			else
++			{
++				parent_type = get_type_from_va(va->data.ad->va);
++				parent_cl = look_up_class(parent_type);
++			}
+ 			if(parent_cl == NULL)
+ 			{
+ 				cout << "couldn't find parent class in get_type_from_va " << parent_type << endl;
+@@ -695,8 +730,20 @@ string get_type_from_va(variable_access_t *va)
+ 			}
+ 			break;
+ 		case VARIABLE_ACCESS_T_METHOD_DESIGNATOR:
+-			parent_type = get_type_from_va(va->data.md->va);
+-			parent_cl = look_up_class(parent_type);
++			if(va_is_this(va->data.md->va)) 
++			{
++				if(current_class_of_func == NULL)
++					cout << "get_type_from_va error call within static main class\n";
++
++				/* we want the class that we are currently in */
++				parent_type = current_class_of_func->name;
++				parent_cl = current_class_of_func;
++			}
++			else
++			{
++				parent_type = get_type_from_va(va->data.md->va);
++				parent_cl = look_up_class(parent_type);
++			}
+ 			if(parent_cl == NULL)
+ 			{
+ 				cout << "couldnt find parent class in get_type_from_va " << parent_type << endl;
+@@ -944,40 +991,61 @@ tuple<string,string> get_offset_and_class_for_va_id(char *va)
+ 	string va_id(va);
+ 	tuple<string, string> va_id_tuple;
+ 	string offset, class_name;
+-	VarNode *va_node = look_up_global_var(va_id); //processed
+-
+-	if(va_node != NULL) /* its a global var take absolute offset */
++	if(va_id.compare("this") == 0) /*is its reserved word this*/
+ 	{
+-		if(va_node->is_primitive)
+-		{
+-			offset = gen_right_var_offset_based_on_scope(va_node);
+-		}
+-		else
++		if(current_class_of_func == NULL) /* we should be in a class func call to use this*/
++			cout << "error used this within a static method\n";
++
++		else /*class call, we need to return the location of the class obj ptr*/
+ 		{
+-			offset = "mem[" + gen_right_var_offset_based_on_scope(va_node) + "]";
++			int param_size = current_func->params.size();
++			/* accesses the val at the location where the object ptr is stored
++			   ptr = 2 params = 3 - 4 fp = 5  thus ptr = fp - (param_size + 1)
++			   										   =  5 - 3 = 2 = ptr 
++			   									mem[ptr] -> value of the pointer
++			   									mem[mem[ptr]] ->  location of obj*/ 
++			offset = "mem[mem[mem[FP] - " + std::to_string((param_size+ 1)) + "]]";
++
++			class_name = current_class_of_func->name;
+ 		}
+-
+-		class_name = va_node->type;
+ 	}
+-	else 
++	else
+ 	{
+-		va_node = look_up_temp_var(va_id); //processed
+-		if(va_node != NULL)
++		VarNode *va_node = look_up_global_var(va_id); //processed
++
++		if(va_node != NULL) /* its a global var take absolute offset */
+ 		{
+ 			if(va_node->is_primitive)
+ 			{
+-				offset = "mem[FP] + " + gen_tmp_rhs_offset_based_on_scope(va_node);
++				offset = gen_right_var_offset_based_on_scope(va_node);
+ 			}
+ 			else
+ 			{
+-				offset = "mem[mem[FP] + " + gen_tmp_rhs_offset_based_on_scope(va_node) + "]";
++				offset = "mem[" + gen_right_var_offset_based_on_scope(va_node) + "]";
+ 			}
+ 
+ 			class_name = va_node->type;
+ 		}
+ 		else 
+ 		{
+-			cout << "get_offset_and_class_for_va_id couldnt find var " << va_id << endl;
++			va_node = look_up_temp_var(va_id); //processed
++			if(va_node != NULL)
++			{
++				if(va_node->is_primitive)
++				{
++					offset = "mem[FP] + " + gen_tmp_rhs_offset_based_on_scope(va_node);
++				}
++				else
++				{
++					offset = "mem[mem[FP] + " + gen_tmp_rhs_offset_based_on_scope(va_node) + "]";
++				}
++
++				class_name = va_node->type;
++			}
++			else 
++			{
++				cout << "get_offset_and_class_for_va_id couldnt find var " << va_id << endl;
++			}
+ 		}
+ 	}
+ 
+@@ -988,7 +1056,7 @@ tuple<string,string> get_offset_and_class_for_va_id(char *va)
+ 
+ tuple<string,string> get_offset_and_class_for_attr_des(attribute_designator_t *attr)
+ {
+-	std::tuple<string, string> va_tuple = retrieve_offset_for_va(attr->va);
++	std::tuple<string, string> va_tuple = retrieve_offset_for_va(attr->va); 
+ 	string tmp_id(attr->id);
+ 	VarNode *id_var_node = get_var_node_from_class(std::get<1>(va_tuple), tmp_id);
+ 
+@@ -1412,9 +1480,16 @@ VarNode_c* find_main_func_var_list(class_list_t *main)
+ 
+ 	while(fdl != NULL)
+ 	{
+-		func_name = char_to_str(fdl->fd->fh->id);
+-		if(func_name.compare(class_name) == 0)
+-			return fdl->fd->fb->vdl->vd->var_list;
++		if(fdl->fd != NULL)
++		{
++			func_name = char_to_str(fdl->fd->fh->id);
++			if(func_name.compare(class_name) == 0)
++				if(fdl->fd->fb->vdl != NULL)
++					return fdl->fd->fb->vdl->vd->var_list;
++		}
++
++
++		fdl = fdl->next;
+ 	}
+ 
+ 	return NULL;

@@ -1,0 +1,123 @@
+(* shows use of recursive calls, really show with large fib number *)
+
+program test;
+
+class AttrArray 
+BEGIN
+    VAR
+    aa : ARRAY [0..19] of ArrayClass;
+END
+
+class ArrayClass
+BEGIN
+    VAR
+        val : integer;
+
+FUNCTION happy(VAR aap, iip: integer ; cc : integer ; bb : boolean) : integer;
+VAR
+    aa : ARRAY [0..19] of ArrayClass;
+    ii, jj, tmp : integer;
+    tmpC : ArrayClass;
+BEGIN
+    ii := iip;
+    print True;
+    print val; (* will be val set from arraysort *)
+    print True;
+    val := 250;
+    aap := 233;
+    iip := 343; (*shows will update actual var for pass by VAR*)
+
+    happy := cc
+
+END;
+
+FUNCTION arraysort(VAR uns : AttrArray ; VAR size : integer) : AttrArray;
+VAR 
+        ii, tmp, jj, hold : integer;
+        tmpC : ArrayClass;
+        bool : boolean;
+
+BEGIN
+        ii := 1;
+        val := 15;
+        print this.val;
+
+        print False;
+        ii := this.happy(ii,jj,hold,bool);
+
+        print this.val; (* will be different set in happy *)
+        
+        arraysort := uns
+
+END
+
+END
+
+
+class test
+BEGIN   
+VAR
+    aa : ARRAY [0..19] of ArrayClass;
+    ii, jj, tmp : integer;
+    bool : boolean;
+    tmpC : ArrayClass;
+    attr, uns : AttrArray;
+FUNCTION test;
+BEGIN
+    attr := new AttrArray;
+    ii := 0;
+    while ii < 20 DO 
+    BEGIN
+        attr.aa[ii]:= new ArrayClass;
+        ii := ii + 1
+    END;
+
+
+
+    (*uns := tmpC.arraysort(attr, tmp)*)(*attr will be changed, uns will hold attr prev
+                                            vals sorted *)
+
+    jj := 0;
+
+    while jj <= 40 DO (* SUUUPER SLOW bust shows how robust functions are *)
+    BEGIN
+        ii := fib(jj);
+        print ii
+    END
+      
+
+END;
+
+FUNCTION fib(VAR xx :integer): integer;
+VAR
+    return : integer;
+    fb1 , fb2 :integer;
+BEGIN
+    
+    if xx < 0 THEN
+        BEGIN
+            return := -1
+        END
+    ELSE if xx = 0 THEN
+        BEGIN
+            return := 0
+        END
+    ELSE if xx = 1 THEN
+        BEGIN
+            return := 1
+        END
+    ELSE 
+        BEGIN
+        fb1 := fib(xx-1);
+        fb2 := fib(xx-2);
+        return := fb1 + fb2
+        END;
+
+    xx := xx + 1;
+
+    fib := return
+END
+
+
+END
+.

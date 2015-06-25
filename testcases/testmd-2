@@ -1,0 +1,124 @@
+(* shows support of classes with class attributes and support for extended classes *)
+program test;
+
+class EE
+BEGIN
+VAR
+    int : integer;
+END
+
+class DD
+BEGIN
+VAR
+    ee : EE;
+    int : integer;
+END
+
+class CC
+BEGIN
+VAR
+   dd : DD;
+   int : integer; 
+END
+
+
+class AA extends CC
+BEGIN   
+VAR
+    axl,bxl : integer;
+    gfd,exe : boolean;
+    ljs  : integer;
+    cc : CC;
+END
+
+
+
+class BB extends AA
+BEGIN   
+VAR
+    b4b  : boolean;
+    bb1 : AA;
+END
+
+
+
+class test
+BEGIN   
+VAR
+    aa,bb,cc : integer;
+    dd,ee : boolean;
+    ff  : integer;
+    testa : AA;
+    testb : BB;
+FUNCTION test;
+BEGIN
+    aa := 0;
+    testa := new AA;
+    testa.axl := 15;
+    aa := testa.axl + 3;
+    print testa.axl;
+    testb := new BB;
+    testb.axl := 1;
+    testa.axl := testb.axl;
+    dd := True OR False;
+    print aa;
+    print dd;
+    print testa.axl;
+
+    testa.cc := new CC;
+    testa.cc.dd := new DD;
+    testa.cc.dd.ee := new EE;
+    testa.cc.dd.ee.int := 5;
+
+    print testa.cc.dd.ee.int;
+    aa := 0;
+    while testa.cc.dd.ee.int > 0 DO
+    BEGIN
+        testa.cc.dd.ee.int := testa.cc.dd.ee.int - 1;
+        print testa.cc.dd.ee.int;
+    
+        if aa = 0 THEN
+            BEGIN
+                print aa;
+                aa := 1
+            END
+            ELSE
+                if  aa = 1 THEN
+                BEGIN
+                    print aa;
+                    aa := 2
+                END
+                ELSE
+                    if aa = 2 THEN
+                    BEGIN
+                        print aa;
+                        aa := 3
+                    END
+                    ELSE
+                        if aa = 3 THEN
+                        BEGIN
+                            print aa;
+                            aa := 4
+                        END
+                        ELSE
+                            if aa = 4  THEN
+                            BEGIN
+                                print aa;
+                                aa := 5
+                            END
+                            ELSE
+                                print True
+
+    END;
+
+    testb.dd := new DD; (* grandparents attribute *)
+    testb.dd.int := 7;
+
+    print False;
+    print testb.dd.int
+
+
+END
+
+END
+.

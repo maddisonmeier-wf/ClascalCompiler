@@ -1,0 +1,103 @@
+(* creates and sorts a linked list *)
+program test;
+
+class ListNode
+BEGIN
+VAR 
+    val : integer;
+    next : ListNode;
+END
+
+class test
+BEGIN   
+VAR
+    pList, ListCurrent, head, current, pp : ListNode;
+    counter : integer;
+    bool : boolean;
+FUNCTION test;
+BEGIN
+    counter := 0;
+    pList:= new ListNode;
+    pList.val := 3;
+    ListCurrent := pList;
+
+    while counter < 7 DO
+    BEGIN
+        ListCurrent.next := new ListNode;
+
+        if ListCurrent.val = 3 THEN
+                ListCurrent.next.val := 7
+            ELSE if ListCurrent.val = 7 THEN
+                    ListCurrent.next.val := 4
+                ELSE if ListCurrent.val = 4 THEN
+                        ListCurrent.next.val := 9 
+                    ELSE if ListCurrent.val = 9 THEN
+                            ListCurrent.next.val := 5
+                        ELSE if ListCurrent.val = 5 THEN
+                                ListCurrent.next.val := 2
+                            ELSE if ListCurrent.val = 2 THEN
+                                    ListCurrent.next.val := 6
+                                ELSE if ListCurrent.val = 6 THEN
+                                        ListCurrent.next.val := 1
+                                    ELSE 
+                                        ListCurrent.next.val := 200;
+
+
+        ListCurrent := ListCurrent.next;
+        counter := counter + 1
+    END;
+
+    current := pList;
+    
+    
+    (* print unsorted list *)
+    while current <> 0 DO
+    BEGIN
+        print current.val;
+        current := current.next
+    END;
+
+
+    print True; (* used to separate the two lists *)
+    (*insertion sort on the list above *)
+
+    while pList <> 0 DO
+    BEGIN
+        current := pList;
+        pList := pList.next;
+
+        if (head = 0) OR (current.val < head.val) THEN
+        BEGIN
+            current.next := head;
+            head := current
+        END
+        ELSE
+        BEGIN
+            pp := head;
+            bool := True;
+            while (pp <> 0) AND bool  DO
+            BEGIN
+                if (pp.next = 0) OR (current.val < pp.next.val) THEN
+                BEGIN
+                    current.next := pp.next;
+                    pp.next := current;
+                    bool := False
+                END
+                ELSE
+                    pp := pp.next 
+            END
+        END
+
+    END;
+
+    (* print the final sorted list *)
+    while head <> 0 DO
+    BEGIN
+        print head.val;
+        head := head.next
+    END
+   
+END
+
+END
+.

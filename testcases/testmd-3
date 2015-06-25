@@ -1,0 +1,65 @@
+(* creates a linked list and shows some nesting if and while statements *)
+program test;
+
+class EE
+BEGIN
+VAR
+    id : integer;
+    next : EE;
+END
+
+
+class test
+BEGIN   
+VAR
+    counter, aa, test, oo  : integer;
+    linkedListcurrent, linkedListhead, tmp : EE;
+    temp : boolean;
+FUNCTION test;
+BEGIN
+    aa := 1;
+    linkedListhead := new EE;
+    linkedListhead.id := aa;
+    linkedListcurrent := linkedListhead;
+    test := 200;
+    aa := aa + 1;
+    
+    while counter < 10 DO
+    BEGIN
+        linkedListcurrent.next := new EE;
+        linkedListcurrent.next.id := aa;
+        linkedListcurrent := linkedListcurrent.next;
+        counter := counter + 1;
+        if (aa MOD 2) = 0 THEN
+        BEGIN
+            aa := aa + 1
+        END
+        ELSE
+            aa := aa * 2
+    END;
+
+    tmp := linkedListhead;
+
+    while tmp <> 0 DO
+    BEGIN
+        print tmp.id;
+        if tmp.id = 63 THEN
+        BEGIN
+            print True;
+            while linkedListhead <> 0 DO
+            BEGIN
+                print linkedListhead.id;
+                linkedListhead := linkedListhead.next
+            END
+        END
+        ELSE
+            aa := 1;
+
+        tmp := tmp.next
+    END
+  
+
+END
+
+END
+.

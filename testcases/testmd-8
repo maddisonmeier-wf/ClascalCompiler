@@ -1,0 +1,203 @@
+program test;
+
+class EE
+BEGIN
+VAR
+    int : integer;
+END
+
+class DD
+BEGIN
+VAR
+    ee : EE;
+    int : integer;
+END
+
+class CC
+BEGIN
+VAR
+   dd : array [1..9] of DD;
+   int : integer;
+   next : CC; 
+END
+
+
+class AA extends CC
+BEGIN   
+VAR
+    axl,bxl : integer;
+    gfd,exe : boolean;
+    ljs  : integer;
+    cc : CC;
+END
+
+
+
+class BB extends AA
+BEGIN   
+VAR
+    b4b  : boolean;
+    bb1 : AA;
+END
+
+
+
+class test
+BEGIN   
+VAR
+    aa,bb,cc : ARRAY [4..6] of ARRAY [0..8] of ARRAY [0..2] of integer;
+    dd,ee : boolean;
+    ff, counter, dm1, dm2, dm3  : integer;
+    ccvar : CC;
+    testa : AA;
+    testb : BB;
+    result : integer;
+    global  : ARRAY[0..99] OF ARRAY[0..9] OF ARRAY[10..14] OF ARRAY [1..3] OF integer; 
+FUNCTION test;
+BEGIN
+    
+    ccvar := new CC;
+    dm1 := 4;
+    dm2 := 0;
+    dm3 := 0;
+
+    ff := 4;
+    aa[ff][0][0] := 2;
+    aa[ff+1][0][0] := 3;
+    aa[ff+2][0][0] := 5;
+    aa[0][ff+2][0] := 18;
+    aa[6][8][2] := 31;
+    
+    print aa[4][0][0];
+    print aa[5][0][0];
+    print aa[6][0][0];
+    print aa[0][6][0];
+    print aa[6][8][2];
+
+    print aa[4][0][0];
+    aa[ff][0][0] := aa[0][ff+2][0];
+    print False;
+    print aa[4][0][0];
+
+    print True;
+
+    ccvar.dd[ff] := 500;
+
+    print ccvar.dd[4];
+    aa[ff][0][0] := ccvar.dd[4];
+    print aa[ff][0][0];
+
+    print True;
+    print True;
+    counter := 1;
+    while counter <= 9 DO
+    BEGIN
+        ccvar.dd[counter] := ff + counter;
+        counter := counter + 1
+    END;
+
+
+    counter := 1;
+    while counter <= 9 DO
+    BEGIN
+        print ccvar.dd[counter];
+        counter := counter + 1
+    END;
+
+    print True;
+
+    counter := 0;
+
+    while dm1 <= 6 DO
+    BEGIN
+        dm2 := 0;
+        while dm2 <= 8 DO
+        BEGIN
+            dm3 := 0;
+            while dm3 <= 2 DO
+            BEGIN
+                    aa[dm1][dm2][dm3] := counter;
+                    counter := counter + 1;
+                dm3 := dm3 + 1
+            END;
+            dm2 := dm2 + 1
+        END;
+        dm1 := dm1 + 1
+    END;
+
+    dm1 := 6;
+    dm2 := 8;
+    dm3 := 2;
+
+    while dm1 >= 4 DO
+    BEGIN
+        dm2 := 8;
+        while dm2 >= 0 DO
+        BEGIN
+            dm3 := 2;
+            while dm3 >= 0 DO
+            BEGIN
+                    print aa[dm1][dm2][dm3];
+                dm3 := dm3 - 1
+            END;
+            dm2 := dm2 - 1
+        END;
+        dm1 := dm1 - 1
+    END;
+
+    print False;
+    print False; (*used to separate the next values for easy viewing *)
+
+   ff := 7;
+   dm1 := 3;
+   dm2 := 4;
+
+   (* to show the indexes that we will be setting to check for correct print*)
+   result := (ff * dm1 * dm2) - (4 * ff+ 31);
+   print result; 
+   result := ff+dm1 - (ff * 3) MOD 5;
+   print result;
+   result := dm2 - dm1 + (ff *3) MOD 14 + (dm1 * 2);
+   print result;
+   result := ff * 2 + (dm2 * dm2) MOD 3  - (dm1 * 4);
+   print result;
+
+   print True; (*used to split results*)
+
+   global[(ff * dm1 * dm2) - (4 * ff+ 31)][ff+dm1 - (ff * 3) MOD 5][dm2 - dm1 + (ff *3) MOD 14 + (dm1 *2)][ff * 2 + (dm2 * dm2) MOD 3 - (dm1 * 4)] := 13;
+   print global [25][9][14][3]; (*as seen above these are the evaluated expressions and we should see 13 here *)
+
+   print True; (*used to split results *)
+
+   global[global[25][9][14][3]][0][1][1] := 77;
+   print global[13][0][1][1]; (*the first index was just set to 13 so this should print out 77 set above*)
+
+
+   global[95][5][12][2] := 88;
+   PRINT global[95][5][12][2];
+   
+   counter := 0;
+   WHILE counter <= 99 DO
+   BEGIN
+      global[counter][4][11][2] := 2;
+      global[counter][4][11][2] := 2;
+      global[counter][4][12][2] := 2;
+      global[counter][4][12][2] := 2;
+      global[counter][6][12][2] := 2;
+      global[counter][6][11][2] := 2;
+      global[counter][6][11][2] := 2;
+      counter := counter + 1
+   END;
+
+   
+   PRINT global[95][5][12][2];
+   PRINT global[95][4][11][2];
+   PRINT global[95][6][11][2];
+   PRINT global[95][6][11][2];
+   PRINT global[5][6][11][2]
+
+
+END
+
+END
+.
